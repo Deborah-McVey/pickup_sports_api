@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+    # validations
     validates :user_name, presence: true, uniqueness: true, length: {minimum: 3, maximum: 30}
     validate :validate_user_name
     validates :email, presence: true, uniqueness: true, length: {minimum: 5, maximum: 255}, format: {
@@ -11,6 +12,7 @@ class User < ApplicationRecord
     has_many :posts, dependent: :destroy
     has_one :profile, dependent: :destroy
     has_many :comments, dependent: :destroy
+    has_one :location, as: :locationable, dependent: :destroy
 
     private
     def validate_user_name 
