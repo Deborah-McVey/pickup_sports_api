@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [ :show, :update, :destroy ]
+  before_action :set_user, only: [:show, :update, :destroy]
 
   def index
     users = User.all
@@ -19,7 +19,7 @@ class UsersController < ApplicationController
     if user.save
       render json: user, status: :created
     else
-      render json: user.erros, status: :unprocessable_entity
+      render json: user.errors, status: :unprocessable_entity
     end
   end
 
