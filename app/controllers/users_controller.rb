@@ -3,12 +3,11 @@ class UsersController < ApplicationController
 
   def index
     users = User.all
-    
     render json: users, status: 200
   end
 
   def show
-    #user = User.find[params[:id]]
+    # user = User.find[params[:id]]
 
     render json: @users, status: 200
   end
@@ -55,3 +54,4 @@ class UsersController < ApplicationController
     params.require[:user].permit(:user_name, :email, :first_name, :last_name)
   end
 end
+end 
