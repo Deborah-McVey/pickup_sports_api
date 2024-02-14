@@ -5,9 +5,17 @@ RSpec.describe "Sessions", type: :request do
     let(:user) { create(:user) }
 
     it 'authenticate the user and returns a success response' do
-      post "/login", params { user_name}
+      post '/login', params { user_name: user.user_name, password: user.password }
       expect(response).to have_http_status(:success)
+      expect(JSON.parse(resonse.body)).to include('token')
     end
+
+    it 'does not authenticate the user and returns an error' do
+      post '/login', params: { user_name: user.user_name, password: 'wrong_password' }
+      expect(resonse).to have_http_status(:unauthorized)
+    end
+
+
   end
 
 end
