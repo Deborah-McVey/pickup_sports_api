@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'sessions/create'
  # localhost:3000/users
  #get '/users', to: 'users#index'
 
@@ -14,9 +15,13 @@ Rails.application.routes.draw do
  # localhost:3000/users/1
  #put '/users/:id', to: 'users#destroy'
 
- resources :users do
-    get 'posts', to: 'users#posts_id'
+ scope '/' do
+   post 'login', to: 'sessions#create'
  end
 
+ resources :events
  resources :posts
+ resources :users do
+    get 'posts', to: 'users#posts_index'
+ end
 end

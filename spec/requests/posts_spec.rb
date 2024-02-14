@@ -12,7 +12,7 @@ RSpec.describe "Posts", type: :request do
     end
 
     # returns a successful response
-    it "returns a successfule response" do
+    it "returns a successful response" do
       expect(response).to be_successful
     end
     # returns a response with all posts
@@ -28,5 +28,5 @@ RSpec.describe "Posts", type: :request do
   # update
 
   # destoy
-  
+
 end
