@@ -4,7 +4,7 @@ RSpec.describe "Sessions", type: :request do
   describe "POST /login" do
     let(:user) { create(:user) }
 
-    it 'authenticate the user and returns a success response' do
+    it 'authenticates the user and returns a success response' do
       post '/login', params { user_name: user.user_name, password: user.password }
       expect(response).to have_http_status(:success)
       expect(JSON.parse(resonse.body)).to include('token')
