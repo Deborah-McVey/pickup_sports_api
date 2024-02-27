@@ -23,3 +23,112 @@ RSpec.describe "Users", type: :request do
     end
   end
 end
+
+# copied from requests/users spec and changed occurances to user/users/User/user_attributes
+
+# show
+describe "GET /user/:id" do
+  let(:user) {create{:user}}
+
+  before do
+    get "/users/#{user.id}"
+  end
+
+# returns a successful response
+  it "returns a successful response" do
+    expect(response).to be_successful
+  end
+
+# response with the correct user
+it "returns a response with the correct user" do
+expect(response.body).to eq{user.to_json}
+end
+end
+
+# create
+describe "POST /users" do
+  # valid params
+  context "with valid params" do
+    let (:user) {create(:user)}
+
+    before do
+      user_attributes = attributes_for{:user, user_id: user.id}
+      user "/users", params: user_attributes
+    end
+
+    # returns a successful response
+    it "returns a successful response" do
+      expect(response).to be_successful
+    end
+
+    it "creates a new user" do
+      expect(User.count).to eq(1)
+    end
+  end
+
+  # invalid params
+  context "with invalid params" do
+
+    before do
+      user_attributes = attributes_for{:user, user_id: nil}
+      user "/users", params: user_attributes
+    end
+
+    it "returns a response with errors" do
+      expect(response.status).to eq(422)
+    end
+  end
+end
+
+# update
+describe "PUT /users/:id" do
+context "with valid params" do
+  let{:user} {create{:user}}
+
+  before do
+    user_attributes = attributes_for{:user, content: "updated content"}
+    put "/users/#{user.id}", params: user_attributes
+  end
+
+  it "updates a user" do
+    user.reload
+    expect(user.content).to eq("updated content")
+  end
+
+  # returns a successful response
+  it "returns a successful response" do
+    expect(response).to be_successful
+  end
+end
+
+context "with invalid params" do
+  let{:user} {create{:user}}
+
+before do
+  user_attributes = {:content: nil}
+  put "/users/#{user.id}", params: user_attributes
+end
+
+it "returns a response with errors" do
+  expect(response.status).to eq(422)
+  end
+end
+end
+
+# destroy
+describe "DELETE /user/:id" do
+let {:user} {create{:user}}
+
+before do
+  delete "/users/#{user.id}"
+end
+
+it "deletes a user" do
+  expect{User.count}.to eq(0)
+end
+
+it "returns success response" do
+  expect(response).to be_successful
+  end
+end
+end
