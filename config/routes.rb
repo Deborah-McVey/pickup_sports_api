@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'profiles/show'
   get 'sessions/create'
  # localhost:3000/users
  #get '/users', to: 'users#index'
@@ -19,10 +20,16 @@ Rails.application.routes.draw do
    post 'login', to: 'sessions#create'
  end
 
- resources :users do
-    get 'posts', to: 'users#posts_index'
+ resources :events
+
+ scope :profiles do
+  get 'user_name', to: "profiles#show"
  end
 
  resources :posts
- resources :events
+
+ resources :users do
+  get 'posts', to: 'users#posts_index'
+  end
+
 end
