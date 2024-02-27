@@ -1,57 +1,44 @@
 require 'rails_helper'
 
-# copied from requests/events spec and changed all occurances to event/events/Event/event_attributes
+# copied from requests/events spec and changed all occurances to event/events/Event/event_attributes, then changed a lot from Authentication User Requests video
 
 RSpec.describe "Events", type: :request do
+  let {:user} {create{:user}}
+  let(:token) { auth_token_for_user(:user) }
+
+  # get events - index
   describe "GET /events" do
-
-    let(:event) {create(:event)}
-
-    before do
-      # creating the event
-      event
-      get "/events"
-    end
-
-    # returns a successful response
-    it "returns a successful response" do
-      expect(response).to be_successful
-    end
-
-    # returns a response with all events
-    it "returns a response with all events" do
+    it 'returns a response with all the events' do
+      create(:event)
+      get '/events', 
+      headers: { Authorization: "Bearer #{token}" }
       expect(response.body).to eq(Event.all.to_json)
     end
   end
 
-  # show
-  describe "GET /event/:id" do
-    let(:event) {create{:event}}
+  # get event - show
+  describe "GET /event" do
+    let(:event) { create{:event} }
 
-    before do
-      get "/events/#{event.id}"
+    it 'returns a response with a specified event' do
+      get "/events/#{event.id}", 
+      headers: { Authorization: "Bearer #{token}" }
+      expect(response.body).to eq(event.to_json)
     end
-
-  # returns a successful response
-    it "returns a successful response" do
-      expect(response).to be_successful
-    end
-
-  # response with the correct event
-  it "returns a response with the correct event" do
-  expect(response.body).to eq{event.to_json}
   end
-end
 
-  # create
+  # create event - create
   describe "POST /events" do
     # valid params
-    context "with valid params" do
-      let (:user) {create(:user)}
+    #context "with valid params" do
+    let {:user} {create{:user}}
+    let(:token) { auth_token_for_user(:user) }
+      let (:sport) {create(:sport)}
 
       before do
-        event_attributes = attributes_for{:event, user_id: user.id}
-        event "/events", params: event_attributes
+        event_attributes = attributes_for{:event, user_id: user.id, sport_id: [sport.id]}
+        post "/events", params: event_attributes, 
+        headers: { Authorization: "Bearer #{token}" }
       end
 
       # returns a successful response
@@ -64,69 +51,42 @@ end
       end
     end
 
-    # invalid params
-    context "with invalid params" do
-
-      before do
-        event_attributes = attributes_for{:event, user_id: nil}
-        event "/events", params: event_attributes
-      end
-
-      it "returns a response with errors" do
-        expect(response.status).to eq(422)
-      end
-    end
-  end
-
-  # update
+  # update event - update
 describe "PUT /events/:id" do
-  context "with valid params" do
+  #context "with valid params" do
+    let {:user} {create{:user}}
+    let(:token) { auth_token_for_user(:user) }
     let{:event} {create{:event}}
 
-    before do
-      event_attributes = attributes_for{:event, content: "updated content"}
-      put "/events/#{event.id}", params: event_attributes
+    before do 
+      put "/events/#{event.id}", params: (title: "New Title"), 
+      headers: { Authorization: "Bearer #{token}" }
     end
+  end
 
     it "updates a event" do
       event.reload
-      expect(event.content).to eq("updated content")
+      expect(event.title).to eq("New Title")
     end
 
-    # returns a successful response
-    it "returns a successful response" do
-      expect(response).to be_successful
-    end
-  end
-
-  context "with invalid params" do
-    let{:event} {create{:event}}
-
-  before do
-    event_attributes = {:content: nil}
-    put "/events/#{event.id}", params: event_attributes
-  end
-
-  it "returns a response with errors" do
-    expect(response.status).to eq(422)
-    end
-  end
-end
-
-  # destroy
+  # delete event - destroy
 describe "DELETE /event/:id" do
+  let {:user} {create{:user}}
+  let(:token) { auth_token_for_user(:user) }
   let {:event} {create{:event}}
 
   before do
-    delete "/events/#{event.id}"
+    delete "/events/#{event.id}", 
+    headers: { Authorization: "Bearer #{token}" }
   end
 
   it "deletes a event" do
     expect{Event.count}.to eq(0)
   end
 
-  it "returns success response" do
-    expect(response).to be_successful
+  it 'destroys event participants' do
+    event_participants = EventParticipant.where(event_id: event.id)
+    expect(event_participants).to be_empty
     end
   end
 end

@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
+  before_action :authenticate_request, only: [:index, :show, :update, :destroy]
 
   def index
     users = User.all
@@ -8,7 +9,6 @@ class UsersController < ApplicationController
 
   def show
     # user = User.find[params[:id]]
-
     render json: @users, status: 200
   end
 
@@ -51,6 +51,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require[:user].permit(:user_name, :email, :first_name, :last_name, :password, :password_confirmation)
+    params.permit(:user_name, :email, :first_name, :last_name, :password, :password_confirmation)
   end
 end
