@@ -33,3 +33,20 @@ class EventsController < ApplicationController
     end
 
     # needs destroy
+    # copied from posts controller, replaced occurances
+    def destroy
+        if @event.destroy
+          render json: @event.errors, status: :unprocessable_entity
+      end
+      
+      private
+    
+      def set_event
+        @event = Event.find(params[:id])
+      end
+    
+      def event_params
+        params.permit(:content, :guests)
+      end
+    end
+
