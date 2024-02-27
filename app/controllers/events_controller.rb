@@ -14,11 +14,22 @@ class EventsController < ApplicationController
     end
 
     def create
-        event = @current_user.created_events
+        event = @current_user.created_events.new(event_params)
 
         if event.save
-            render json: event, status: :created_events
+            render json: event, status: :created
+        
+        else 
+           render json: event.errors, status: :unprocessable_entity 
+            end
+        end
 
+    def update
+        if @event.update(event_params)
+            render json: @event, status: :ok
+        else
+            render json: @event_errors, status: :unprocessable_entity
         end
     end
-end
+
+    # needs destroy
